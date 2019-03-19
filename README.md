@@ -21,5 +21,8 @@ Y is considered as a vowel if it's part of a consonant cluster. For eg. the word
 4. Retains capitalisation of fully capital words (eg. *CAPITAL* becomes *APITALCAY*) or words starting with a capital vowel (eg. *And* becomes *Andyay*).
 
 ## Sample
-![Original File](/Screenshots/Input.png)
-![Output File](/Screenshots/Output.png)
+Input file
+![Original File](/Screenshots/Output.png)
+
+Output file
+![Output File](/Screenshots/Input.png)
