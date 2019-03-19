@@ -1,20 +1,19 @@
 from string import punctuation
 
-def encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord): #Actual encoding of the word takes place here
+def encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord, oldWord): #Actual encoding of the word takes place here
     revPunctCounter = 0
     for c in reversed(word):
         if c in punctuation:
             revPunctCounter = revPunctCounter + 1
     if word[wordLen-1] in punctuation: #Checking if the word ends with a punctuation
-        encodedWord = word[rangeStart:(wordLen-revPunctCounter)] + consWord + succAdd + word[(wordLen-revPunctCounter):]
+        encodedWord = oldWord[rangeStart:(wordLen-revPunctCounter)] + consWord + succAdd + oldWord[(wordLen-revPunctCounter):]
     else:
-        encodedWord = (word[rangeStart:(wordLen)] + consWord + succAdd)
+        encodedWord = (oldWord[rangeStart:(wordLen)] + consWord + succAdd)
     if prevWord.endswith(".") or not prevWord:
-        print prevWord
         encodedWord = encodedWord[0].upper() + encodedWord[1:len(encodedWord)]
     encodedWords.append(encodedWord)
 
-def setValues(V): #Set values of the variables in encoding function
+def setValues(V, cap): #Set values of the variables in encoding function
     if V == 0: #If the first letter is a vowel
         succAdd = 'yay' #The successor to add is yay
         rangeStart = 0 #The entire word is copied as it is so the copying starts from 0
@@ -23,6 +22,9 @@ def setValues(V): #Set values of the variables in encoding function
         succAdd = 'ay' #The successor to add is ay
         consWord = word[0:counter] #The consonant sequence is placed at the end along with the successor
         rangeStart = counter #The word is kept as it is except the consonant sequence, hence, the copying starts from when the consonant ends
+    if cap == 1:
+        succAdd = succAdd.upper()
+        consWord = consWord.upper()
     return succAdd, rangeStart, consWord
 
 words = []
@@ -39,11 +41,15 @@ prevWord = ''
 for word in words:
     wordLen = len(word)
     counter = 0 #This is to find the number of consonants in sequence in beginning of a word
+    cap = 0
+    oldWord = word
+    if word.isupper():
+        cap = 1
     word = word.lower()
     if word[0] in vowels:
         V = 0
-        succAdd, rangeStart, consWord = setValues(V)
-        encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord)
+        succAdd, rangeStart, consWord = setValues(V,cap)
+        encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord, oldWord)
     elif word[0] in consonants:
         succAdd = 'ay'
         V = 1
@@ -52,8 +58,8 @@ for word in words:
                 counter = counter+1
             else:
                 break
-        succAdd, rangeStart, consWord = setValues(V)
-        encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord)
+        succAdd, rangeStart, consWord = setValues(V, cap)
+        encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord, oldWord)
     else:
         if (word[0] in punctuation and wordLen == 1) or word[0].isdigit() == True: #If there is a standalone punctuation or a number
             encodedWords.append(word)
@@ -62,8 +68,8 @@ for word in words:
                 c = list(word)
                 c[0], c[1] = c[1], c[0]
                 word = "".join(c)
-                succAdd, rangeStart, consWord = setValues(V)
-                encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord)
+                succAdd, rangeStart, consWord = setValues(V,cap)
+                encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord, oldWord)
             else:
                 V = 1
                 for c in word:
@@ -71,16 +77,16 @@ for word in words:
                         break;
                     else:
                         counter = counter+1
-                temp1 = word[1:counter]
-                temp2 = word[0]
-                temp3 = word[counter:wordLen]
+                temp1 = oldWord[1:counter]
+                temp2 = oldWord[0]
+                temp3 = oldWord[counter:wordLen]
                 word = temp1 + temp2 + temp3
                 counter = counter - 1
-                succAdd, rangeStart, consWord = setValues(V)
-                encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord)
+                succAdd, rangeStart, consWord = setValues(V,cap)
+                encodeWords(word, wordLen, succAdd, rangeStart, consWord, prevWord, oldWord)
     prevWord = word
-
-print(" ".join(encodedWords))
+with open('output.txt', "w") as outputFile:
+          outputFile.write(" ".join(encodedWords))
 
 
 
